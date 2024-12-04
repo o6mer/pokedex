@@ -13,7 +13,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#e6f0f0',
+    backgroundColor: colors.lightGray,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
@@ -24,12 +24,29 @@ export default StyleSheet.create({
     gap: 8,
   },
   sortButton: {
-    backgroundColor: '#50506e',
+    backgroundColor: colors.darkGray,
     padding: 8,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
+  },
+  filtersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+  },
+  filterButton: {
+    backgroundColor: colors.lightGray,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  selectedFilterButton: {
+    backgroundColor: colors.darkGray,
+  },
+  selectedFilterText: {
+    color: colors.white,
   },
   searchInput: {
     flex: 1,

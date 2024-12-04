@@ -1,67 +1,41 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {FlatList, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../../constants/colors';
 import PokemonCard from '../../components/PokemonCard/PokemonCard';
-import {pokemonMapper} from '../../utils/mapper';
-import {
-  getPokemonByUrl,
-  getPokemonPaginated,
-} from '../../services/pokemonService';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
-import {addPokemonsToList} from '../../store/slices/pokemonSlice';
 import {MainRoutesNames, useMainNavigation} from '../../routes/MainNavigator';
-
-const pageSize = 20;
+import useFetchPokemonPaginated from '../../hooks/useFetchPokemonsPaginated';
+import {typeColors} from '../../constants/typeColors';
 
 const HomeScreen = () => {
-  const dispatch = useDispatch();
   const navigation = useMainNavigation();
-  const pokemons = useSelector((state: RootState) => state.pokemons.pokemons);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentOffset, setCurrentOffset] = useState(
-    Math.floor(pokemons.length / pageSize),
-  );
-
-  useEffect(() => {
-    const fetchPokemonList = async (offset: number) => {
-      try {
-        const data = await getPokemonPaginated(pageSize, offset * pageSize);
-
-        const pokemonDetails = await Promise.all(
-          data.results.map(async pokemon => {
-            const details = await getPokemonByUrl(pokemon.url);
-
-            return pokemonMapper(details);
-          }),
-        );
-
-        dispatch(addPokemonsToList(pokemonDetails));
-      } catch (error) {
-        console.error('Error fetching Pokémon:', error);
-      }
-    };
-
-    fetchPokemonList(currentOffset);
-  }, [currentOffset, dispatch]);
+  const [typeFilter, setTypeFiler] = useState('');
+  const [isFiltersShown, setIsFiltersShown] = useState(false);
+  const {pokemons, fetchNextPage} = useFetchPokemonPaginated();
 
   const handlePokemonCardPressed = (name: string) => {
     navigation.navigate(MainRoutesNames.Details, {name});
   };
 
+  const handleTypeFilerPress = (type: string) => setTypeFiler(type);
+
   const pokemonsToDisplay = useMemo(() => {
-    if (!searchTerm) {
-      return pokemons;
-    }
-    return pokemons.filter(
-      pokemon =>
-        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        String(pokemon.id).includes(searchTerm),
-    );
-  }, [pokemons, searchTerm]);
+    return pokemons.filter(pokemon => {
+      const matchesType = typeFilter
+        ? pokemon.types.includes(typeFilter.toLowerCase())
+        : true;
+
+      const matchesSearchTerm = searchTerm
+        ? pokemon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          String(pokemon.id).includes(searchTerm)
+        : true;
+
+      return matchesType && matchesSearchTerm;
+    });
+  }, [pokemons, searchTerm, typeFilter]);
 
   return (
     <SafeAreaView style={styles.screenContainer}>
@@ -75,18 +49,40 @@ const HomeScreen = () => {
           <TextInput
             onChangeText={setSearchTerm}
             style={styles.searchInput}
-            placeholder="Name or id"
+            placeholder="Name or Id"
           />
         </View>
-        <TouchableOpacity style={styles.sortButton}>
+        <TouchableOpacity
+          style={styles.sortButton}
+          onPress={() => setIsFiltersShown(prev => !prev)}>
           <Icon name="sliders" size={18} color="white" />
         </TouchableOpacity>
       </View>
+      {isFiltersShown ? (
+        <View style={styles.filtersContainer}>
+          {Object.keys(typeColors).map(type => {
+            const isSelected = type === typeFilter;
+
+            return (
+              <TouchableOpacity
+                onPress={() => handleTypeFilerPress(isSelected ? '' : type)}
+                style={[
+                  styles.filterButton,
+                  isSelected && styles.selectedFilterButton,
+                ]}>
+                <Text style={isSelected && styles.selectedFilterText}>
+                  {type}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
       <FlatList
-        onEndReached={() => setCurrentOffset(prev => prev + 1)}
+        onEndReached={fetchNextPage}
         data={pokemonsToDisplay}
         numColumns={2}
-        keyExtractor={pokemon => pokemon.name}
+        keyExtractor={pokemon => pokemon.name + pokemon.id}
         columnWrapperStyle={styles.contentContainerStyle}
         renderItem={({item: pokemon}) => (
           <PokemonCard

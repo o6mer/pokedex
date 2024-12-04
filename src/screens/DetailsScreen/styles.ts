@@ -29,4 +29,18 @@ export default StyleSheet.create({
     borderRadius: 16,
     aspectRatio: 1 / 1.25,
   },
+  statsContainer: {
+    gap: 8,
+    paddingHorizontal: 4,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  pokemonStatTitleText: {
+    fontSize: fontSizes.xl,
+    fontWeight: 'bold',
+  },
+  pokemonStatText: {
+    fontSize: fontSizes.lg,
+  },
 });

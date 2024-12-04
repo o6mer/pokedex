@@ -51,6 +51,26 @@ const DetailsScreen = () => {
           {backgroundColor: typeColors[pokemonDetails.types[0]]},
         ]}
       />
+      <View style={styles.statsContainer}>
+        <View>
+          <Text style={styles.pokemonStatTitleText}>Forms</Text>
+          {pokemonDetails.forms.map(form => (
+            <Text style={styles.pokemonStatText}>{form}</Text>
+          ))}
+        </View>
+        <View>
+          <Text style={styles.pokemonStatTitleText}>Abilities</Text>
+          {pokemonDetails.abilities.map(ability => (
+            <Text style={styles.pokemonStatText}>{ability}</Text>
+          ))}
+        </View>
+        <View>
+          <Text style={styles.pokemonStatTitleText}>Types</Text>
+          {pokemonDetails.types.map(type => (
+            <Text style={styles.pokemonStatText}>{type}</Text>
+          ))}
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

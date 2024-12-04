@@ -21,13 +21,6 @@ export type MainRoutesParamsList = {
 
 const Stack = createNativeStackNavigator<MainRoutesParamsList>();
 
-export const useMainNavigation = () => {
-  return useNavigation<NativeStackNavigationProp<MainRoutesParamsList>>();
-};
-
-export type MainRouteProps<RouteName extends keyof MainRoutesParamsList> =
-  RouteProp<MainRoutesParamsList, RouteName>;
-
 const MainNavigator = () => {
   return (
     <Stack.Navigator
@@ -42,3 +35,10 @@ const MainNavigator = () => {
 };
 
 export {MainNavigator};
+
+export const useMainNavigation = () => {
+  return useNavigation<NativeStackNavigationProp<MainRoutesParamsList>>();
+};
+
+export type MainRouteProps<RouteName extends keyof MainRoutesParamsList> =
+  RouteProp<MainRoutesParamsList, RouteName>;

@@ -1,6 +1,5 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Provider} from 'react-redux';
-import {I18nManager} from 'react-native';
 import {persistor, store} from './src/store/store';
 import {MainNavigator} from './src/routes/MainNavigator';
 import {NavigationContainer} from '@react-navigation/native';
@@ -8,11 +7,6 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {PersistGate} from 'redux-persist/integration/react';
 
 const App: React.FC = () => {
-  useEffect(() => {
-    I18nManager.allowRTL(true);
-    I18nManager.forceRTL(true);
-  }, []);
-
   return (
     <SafeAreaProvider>
       <Provider store={store}>

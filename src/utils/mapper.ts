@@ -6,6 +6,7 @@ const pokemonMapper = (pokemonResponse: PokemonResponse): Pokemon => {
     id: pokemonResponse.id,
     name: pokemonResponse.name,
     nickname: pokemonResponse.name,
+    forms: pokemonResponse.forms.map(form => form.name),
     abilities: pokemonResponse.abilities.map(ability => ability.ability.name),
     image: pokemonResponse.sprites.front_default,
     types: pokemonResponse.types.map(type => type.type.name),
